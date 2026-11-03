@@ -8,4 +8,6 @@ add_executable(Project2
         main.cpp
         Application.cpp
         Application.h
+        HashTable.cpp
+        HashTable.h
 )

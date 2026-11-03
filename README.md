@@ -62,18 +62,36 @@ The loader also tells us how many logs were successfully loaded and how many lin
 
 ## Hash Table
 
-**ALEXIS PART HERE**
+The Hash Table is in HashTable.h and HashTable.cpp. It is written from scratch (no std::unordered_map).
 
-**Add this once the Hash Table is finished:**
-- hash function used
-- how collisions are handled
-- what information is inserted
-- how searches return matching log IDs
+**Functions**
+- `void insert(string key, int logId);` adds a log ID under a key
+- `vector<int> search(string key);` returns every log ID stored under that key, or an empty vector if the key isn't there
+- `void clear();` empties the table so it can be rebuilt after loading a new file
+- Stats for the performance comparison: `size()`, `bucketCount()`, `loadFactor()`, `collisionCount()`, `resizeCount()`, `longestChain()`, `memoryUsage()`
 
-***Try to keep the Hash Table in HashTable.h and HashTable.cpp. Functions that would make integration easiest: 
-- void insert(string key, int logId);
-- vector<int> search(string key);
-If you use different names, just let me (Kayla) know so I can change them in Application.cpp.
+**Hash function**
+FNV-1a. For each character, the hash is XORed with the character and then multiplied by a large prime. The bucket index is `hash % bucketCount`. This spreads out keys that look alike, such as `/usr/login` and `/usr/logout`.
+
+**Collision handling**
+Separate chaining. Each bucket is a list of entries (key + list of log IDs). When a new key lands in a bucket that already has something in it, it gets added to that bucket's chain, and the collision counter goes up.
+
+**Resizing**
+The table starts with 16 buckets. When the load factor (keys / buckets) goes over 0.75, the number of buckets doubles and every entry is rehashed into the new array. This keeps chains short, so lookups stay O(1) on average.
+
+**What gets inserted**
+Each key maps to the IDs of every log that has that key. For example, `insert(log.serviceName, log.id)` and `insert(log.severity, log.id)` let you search `/usr/login` or `ERROR`. Logs are inserted in ID order, so each ID list is already sorted, and inserting the same log twice under one key does not create a duplicate.
+
+**Searching**
+`search` hashes the key, goes to that bucket, walks the chain until the key matches, and returns that key's list of log IDs. Searches are exact and case-sensitive (`ERROR` matches, `error` does not).
+
+**Complexity**
+- insert / search: O(1) average and O(n) worst case (every key in one bucket), plus O(L) to hash a key of length L. Returning the results is O(k) for k matching IDs.
+- resize: O(n) but rare (amortized O(1) per insert).
+- memory: O(buckets + keys + total IDs stored).
+
+**Tested**
+Tested against a brute-force reference with 1,000,000 logs and about 5,000 distinct keys: every search matched. Also tested missing keys, empty keys, a repeated ID, case sensitivity, forced collisions in a 1-bucket table, resizing, and clear().
 
 ## Trie
 
