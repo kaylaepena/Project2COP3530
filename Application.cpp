@@ -1,4 +1,5 @@
 #include "Application.h"
+#include <chrono>
 
 bool Application::parseLine(string line, int id, LogEntry& log) {
     //The timestamp is stored between [ and ], so this finds those positions first
@@ -100,9 +101,11 @@ void Application::loadData() {
 
     //Clears old data in case the user loads a different file later
     logs.clear();
+    hashTable.clear();
 
     string line;
     int count = 0;
+    int skipped = 0;
     //Read no more than the first 100,000 lines
     while (getline(file, line) && count < 100000) {
         LogEntry log;
@@ -111,18 +114,20 @@ void Application::loadData() {
             //Saves the finished log in our vector
             logs.push_back(log);
         }
+        else {
+            skipped++;
+        }
         count++;
     }
     file.close();
     cout << logs.size() << " logs were loaded." << endl;
+    cout << skipped << " lines were skipped." << endl;
 
     //Only keep this when testing
     //printsamplelogsfortest();
 
-    //For the hashtable:
-    //Clear the old Hash Table before building it from the newly loaded dataset
-    hashTable.clear();
-
+    //For the Hash Table:
+    auto hashBuildStart = chrono::high_resolution_clock::now();
     //Store the searchable log information in the Hash Table
     for (int i = 0; i < logs.size(); i++) {
         hashTable.insert(logs[i].serviceName, logs[i].id);
@@ -134,7 +139,16 @@ void Application::loadData() {
             hashTable.insert(word, logs[i].id);
         }
     }
+    auto hashBuildEnd = chrono::high_resolution_clock::now();
+    auto hashBuildTime = chrono::duration_cast<chrono::milliseconds>(hashBuildEnd - hashBuildStart).count();
     cout << "Hash Table built successfully." << endl;
+    cout << "Hash Table build time: " << hashBuildTime << " milliseconds" << endl;
+    //Stats from the Hash Table.cpp/.h
+    cout << "Keys stored: " << hashTable.size() << endl;
+    cout << "Buckets: " << hashTable.bucketCount() << endl;
+    cout << "Collisions: " << hashTable.collisionCount() << endl;
+    cout << "Resizes: " << hashTable.resizeCount() << endl;
+    cout << "Longest chain: " << hashTable.longestChain() << endl;
 
     //For the Trie:
     //Add here later
@@ -194,14 +208,22 @@ void Application::searchHashTable() {
         cout << "You must load the dataset first." << endl;
         return;
     }
+
     string search;
     //Removes the Enter left over from the menu choice
     cin.ignore();
     cout << "Enter what you want to search for: ";
     getline(cin, search);
+    cout << endl;
     cout << "Searching Hash Table for: " << search << endl;
-    //Search returns the IDs of all logs stored under this key
+
+    //Start timing right before the actual search
+    auto start = chrono::high_resolution_clock::now();
     vector<int> results = hashTable.search(search);
+    //Stop timing immediately after the search
+    auto end = chrono::high_resolution_clock::now();
+    auto searchTime = chrono::duration_cast<chrono::microseconds>(end - start).count();
+    cout << "Hash Table search time: " << searchTime << " microseconds" << endl;
     displayresults(results);
 }
 
