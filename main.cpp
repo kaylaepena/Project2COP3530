@@ -2,6 +2,6 @@
 
 int main() {
     Application mainapp;
-    mainapp.showMenu();
+    mainapp.displayMenu();
     return 0;
 }

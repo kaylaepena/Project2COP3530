@@ -26,8 +26,7 @@ private:
 
 public:
     void loadData();
-    void showMenu();
-    void showSampleLogs();
+    void displayMenu();
     void searchHashTable();
     void searchTrie();
     void comparePerformance();
