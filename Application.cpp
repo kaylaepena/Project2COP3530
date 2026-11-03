@@ -118,6 +118,27 @@ void Application::loadData() {
 
     //Only keep this when testing
     //printsamplelogsfortest();
+
+    //For the hashtable:
+    //Clear the old Hash Table before building it from the newly loaded dataset
+    hashTable.clear();
+
+    //Store the searchable log information in the Hash Table
+    for (int i = 0; i < logs.size(); i++) {
+        hashTable.insert(logs[i].serviceName, logs[i].id);
+        hashTable.insert(logs[i].severity, logs[i].id);
+        //Store each word in the message so message keywords can also be searched
+        stringstream words(logs[i].message);
+        string word;
+        while (words >> word) {
+            hashTable.insert(word, logs[i].id);
+        }
+    }
+    cout << "Hash Table built successfully." << endl;
+
+    //For the Trie:
+    //Add here later
+
 }
 
 void Application::displayMenu() {
@@ -170,18 +191,18 @@ void Application::displayMenu() {
 void Application::searchHashTable() {
     //Makes sure the dataset has been loaded before searching
     if (logs.empty()) {
-        cout << "Please load the dataset first." << endl;
+        cout << "You must load the dataset first." << endl;
         return;
     }
     string search;
     //Removes the Enter left over from the menu choice
     cin.ignore();
-
     cout << "Enter what you want to search for: ";
     getline(cin, search);
     cout << "Searching Hash Table for: " << search << endl;
-
-    //Alexis's Hash Table search will be called here later
+    //Search returns the IDs of all logs stored under this key
+    vector<int> results = hashTable.search(search);
+    displayresults(results);
 }
 
 void Application::searchTrie() {

@@ -6,6 +6,7 @@
 #include <string>
 #include <vector>
 #include <sstream>
+#include "HashTable.h"
 
 using namespace std;
 
@@ -23,6 +24,7 @@ class Application {
 private:
 
     vector<LogEntry> logs;
+    HashTable hashTable;
     bool parseLine(string line, int id, LogEntry& log);
     void printsamplelogsfortest();
     void displayresults(vector<int> resultids);
