@@ -1,13 +1,30 @@
 # Project 2 - Server Log Search
-I (Kayla) started setting up the main part of the program.
-Right now I have:
-- `main.cpp`
-- `Application.h`
-- `Application.cpp`
-- `CMakeLists.txt`
-`main.cpp` just starts the program and `Application` is handling loading the data, the menu, searches, and eventually connecting both of your structures together.
+This project searches server log data using two different data structures: a Hash Table and a Trie. We are going to compare how both structures perform when searching the same dataset.
 
-For now I am storing the logs like this:
+## What is done so far
+The main structure of the program and the Application class is as follows:
+- main.cpp
+- Application.h
+- Application.cpp
+- CMakeLists.txt
+- sample_logs.txt
+
+main.cpp starts the program and calls the menu from the Application class.
+
+The Application class currently handles:
+- displaying the main menu
+- loading the dataset
+- reading up to the first 100,000 lines
+- parsing each server log line
+- storing the logs in a vector
+- checking for invalid/malformed log lines
+- keeping track of skipped lines
+- getting the user's Hash Table search input
+- getting the user's Trie search input
+- getting a search term for the performance comparison
+- displaying matching logs once the search structures are connected
+
+Each log is currently stored as:
 ```cpp
 struct LogEntry {
     int id;
@@ -19,30 +36,68 @@ struct LogEntry {
 };
 ```
 
-Alexis - for the Hash Table, just try to keep it in its own `.h` and `.cpp` files. I mainly just need to be able to insert a key with a log ID and search a key and get back the matching log IDs.
-Something like:
-```cpp
-void insert(string key, int logId);
-vector<int> search(string key);
-```
-The exact names do not matter that much, just let me know what you end up using.
+The parser gets the timestamp, request/endpoint, HTTP status code, and response time from each log line.
 
-Alejandra - same idea for the Trie. Keep it in its own `.h` and `.cpp` files. I mainly need to be able to insert a key/log ID, search for an exact match, and do a prefix search.
-Something like:
-```cpp
-void insert(string key, int logId);
-vector<int> search(string key);
-vector<int> prefixSearch(string prefix);
-```
-I am going to handle loading the first 100,000 logs and then pass the same data into both structures.
+The HTTP status code is also used to give the log a basic severity:
+- 500+ = ERROR
+- 400-499 = WARNING
+- everything else = INFO
 
-The menu I have right now is:
+The requested endpoint is currently being used as the serviceName.
+
+The program also creates a simple message from the request, for example: GET /usr/login returned 404
+
+## Current Menu
 1. Load Dataset
 2. Search Using Hash Table
 3. Search Using Trie
 4. Compare Performance
 5. Exit
 
-Later I will connect both of your classes into `Application.cpp` and use `chrono` to compare the search times.
+***The search options currently ask for the user's search term, but the real Hash Table and Trie searches still need to be connected.
 
-Also please do not make another `main.cpp` for the final version because I already have that part set up.
+## Dataset
+The program is set up to read no more than the first 100,000 lines when we use the real dataset.
+The loader also tells us how many logs were successfully loaded and how many lines were skipped because they could not be parsed.
+
+## Hash Table
+
+**ALEXIS PART HERE**
+
+**Add this once the Hash Table is finished:**
+- hash function used
+- how collisions are handled
+- what information is inserted
+- how searches return matching log IDs
+
+***Try to keep the Hash Table in HashTable.h and HashTable.cpp. Functions that would make integration easiest: 
+- void insert(string key, int logId);
+- vector<int> search(string key);
+If you use different names, just let me (Kayla) know so I can change them in Application.cpp.
+
+## Trie
+
+***ALEJANDRA PART HERE
+
+***Add this once the Trie is finished:
+- how words/keys are inserted
+- exact search
+- prefix search
+- how matching log IDs are returned
+
+***Try to keep the Trie in Trie.h and Trie.cpp.
+Functions that would make integration easiest:
+-void insert(string key, int logId);
+-vector<int> search(string key);
+-vector<int> prefixSearch(string prefix);
+If you use different names, just let me (Kayla) know so I can change them in Application.cpp.
+
+## Performance Comparison
+
+**ADD FINAL PERFORMANCE RESULTS HERE LATER**
+
+## Important for everyone
+
+Please do not make another main.cpp for the final version because the program already has one.
+
+Try to keep the Hash Table and Trie in their own .h and .cpp files so they are easier to connect to the existing Application class.
