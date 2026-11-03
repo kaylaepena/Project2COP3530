@@ -67,7 +67,13 @@ bool Application::parseLine(string line, int id, LogEntry& log) {
     //Response time is the last value on each log line
     int lastSpace = line.find_last_of(" ");
     string response = line.substr(lastSpace + 1);
-    log.responseTime = stoi(response);
+    //If the value is invalid, use 0 instead of crashing the program
+    try {
+        log.responseTime = stoi(response);
+    }
+    catch (...) {
+        log.responseTime = 0;
+    }
     //Returning true means the line was successfully parsed
     return true;
 }
