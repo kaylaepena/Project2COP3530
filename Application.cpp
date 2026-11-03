@@ -36,15 +36,23 @@ bool Application::parseLine(string line, int id, LogEntry& log) {
     requestStream >> method;
     requestStream >> endpoint;
     requestStream >> protocol;
+    //If the request does not have all three parts, skip this log line
+    if (requestStream.fail()) {
+        return false;
+    }
 
     //After the request, the next values are the status code and bytes sent
     string rest = line.substr(secondQuote + 1);
     stringstream restStream(rest);
 
-    int statusCode;
-    int bytes;
+    int statusCode = 0;
+    int bytes = 0;
     restStream >> statusCode;
     restStream >> bytes;
+    //If the status code or bytes could not be read, skip this log line to avoid issues
+    if (restStream.fail()) {
+        return false;
+    }
     log.id = id;
 
     //Using the requested endpoint as the service name for our project
@@ -99,7 +107,7 @@ void Application::loadData() {
     while (getline(file, line) && count < 100000) {
         LogEntry log;
         //parseLine fills in the LogEntry if the line is valid
-        if (parseLine(line, count, log)) {
+        if (parseLine(line, logs.size(), log)) {
             //Saves the finished log in our vector
             logs.push_back(log);
         }
@@ -126,6 +134,14 @@ void Application::displayMenu() {
         cout << "-------------------------------" << endl;
         cout << "Enter choice: ";
         cin >> choice;
+        //Makes sure the user entered a number
+        if (cin.fail()) {
+            cin.clear();
+            cin.ignore(10000, '\n');
+            cout << "Invalid choice." << endl;
+            choice = 0;
+            continue;
+        }
         if (choice == 1) {
             loadData();
             cout << "Loading Dataset!" << endl;
