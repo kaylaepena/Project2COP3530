@@ -1,7 +1,75 @@
 #include "Application.h"
 
 bool Application::parseLine(string line, int id, LogEntry& log) {
-    return false;
+    //The timestamp is stored between [ and ], so this finds those positions first
+    int openBracket = line.find("[");
+    int closeBracket = line.find("]");
+
+    //If the brackets aren't found, the line is not formatted correctly
+    if (openBracket == string::npos || closeBracket == string::npos) {
+        return false;
+    }
+
+    //If it is found, continue
+    log.timestamp = line.substr(
+        openBracket + 1,
+        closeBracket - openBracket - 1
+    );
+
+    //The HTTP request is inside quotation marks
+    int firstQuote = line.find("\"", closeBracket);
+    int secondQuote = line.find("\"", firstQuote + 1);
+    if (firstQuote == string::npos || secondQuote == string::npos) {
+        return false;
+    }
+    string request = line.substr(
+        firstQuote + 1,
+        secondQuote - firstQuote - 1
+    );
+
+    //Split the request into method, endpoint, and protocol
+    //Fpr example: GET /usr/login HTTP/1.0
+    string method;
+    string endpoint;
+    string protocol;
+    stringstream requestStream(request);
+    requestStream >> method;
+    requestStream >> endpoint;
+    requestStream >> protocol;
+
+    //After the request, the next values are the status code and bytes sent
+    string rest = line.substr(secondQuote + 1);
+    stringstream restStream(rest);
+
+    int statusCode;
+    int bytes;
+    restStream >> statusCode;
+    restStream >> bytes;
+    log.id = id;
+
+    //Using the requested endpoint as the service name for our project
+    log.serviceName = endpoint;
+
+    //Convert the HTTP status code into a simple severity category
+    if (statusCode >= 500) {
+        log.severity = "ERROR";
+    }
+    else if (statusCode >= 400) {
+        log.severity = "WARNING";
+    }
+    else {
+        log.severity = "INFO";
+    }
+
+    //Make a simple readable message from the request information
+    log.message = method + " " + endpoint + " returned " + to_string(statusCode);
+
+    //Response time is the last value on each log line
+    int lastSpace = line.find_last_of(" ");
+    string response = line.substr(lastSpace + 1);
+    log.responseTime = stoi(response);
+    //Returning true means the line was successfully parsed
+    return true;
 }
 
 void Application::loadData() {
