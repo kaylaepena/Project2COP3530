@@ -83,14 +83,27 @@ void Application::loadData() {
         cout << "Could not open file." << endl;
         return;
     }
-    cout << "File opened successfully!" << endl;
+
+    //Clears old data in case the user loads a different file later
+    logs.clear();
+
     string line;
     int count = 0;
+    //Read no more than the first 100,000 lines
     while (getline(file, line) && count < 100000) {
+        LogEntry log;
+        //parseLine fills in the LogEntry if the line is valid
+        if (parseLine(line, count, log)) {
+            //Saves the finished log in our vector
+            logs.push_back(log);
+        }
         count++;
     }
-    cout << count << " lines were read." << endl;
     file.close();
+    cout << logs.size() << " logs were loaded." << endl;
+
+    //Only keep this when testing
+    //printsamplelogsfortest();
 }
 
 void Application::displayMenu() {
@@ -132,7 +145,6 @@ void Application::displayMenu() {
     }
 }
 
-
 void Application::searchHashTable() {
 
 }
@@ -143,4 +155,21 @@ void Application::searchTrie() {
 
 void Application::comparePerformance() {
 
+}
+
+void Application::printsamplelogsfortest() {
+    //Only prints a couple logs so I can make sure parsing worked
+    int amount = 2;
+    if (logs.size() < 2) {
+        amount = logs.size();
+    }
+    for (int i = 0; i < amount; i++) {
+        cout << endl;
+        cout << "ID: " << logs[i].id << endl;
+        cout << "Timestamp: " << logs[i].timestamp << endl;
+        cout << "Service: " << logs[i].serviceName << endl;
+        cout << "Severity: " << logs[i].severity << endl;
+        cout << "Message: " << logs[i].message << endl;
+        cout << "Response Time: " << logs[i].responseTime << endl;
+    }
 }
