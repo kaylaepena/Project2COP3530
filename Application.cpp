@@ -16,6 +16,12 @@ void Application::loadData() {
         return;
     }
     cout << "File opened successfully!" << endl;
+    string line;
+    int count = 0;
+    while (getline(file, line) && count < 100000) {
+        count++;
+    }
+    cout << count << " lines were read." << endl;
     file.close();
 }
 
