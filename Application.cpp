@@ -146,11 +146,36 @@ void Application::displayMenu() {
 }
 
 void Application::searchHashTable() {
+    //Makes sure the dataset has been loaded before searching
+    if (logs.empty()) {
+        cout << "Please load the dataset first." << endl;
+        return;
+    }
+    string search;
+    //Removes the Enter left over from the menu choice
+    cin.ignore();
 
+    cout << "Enter what you want to search for: ";
+    getline(cin, search);
+    cout << "Searching Hash Table for: " << search << endl;
+
+    //Alexis's Hash Table search will be called here later
 }
 
 void Application::searchTrie() {
+    //Makes sure the dataset has been loaded before searching
+    if (logs.empty()) {
+        cout << "Please load the dataset first." << endl;
+        return;
+    }
+    string search;
+    cin.ignore();
+    
+    cout << "Enter what you want to search for: ";
+    getline(cin, search);
+    cout << "Searching Trie for: " << search << endl;
 
+    //Alejandra's Trie search will be called here later
 }
 
 void Application::comparePerformance() {
