@@ -25,6 +25,7 @@ private:
     vector<LogEntry> logs;
     bool parseLine(string line, int id, LogEntry& log);
     void printsamplelogsfortest();
+    void displayresults(vector<int> resultids);
 
 public:
     void loadData();

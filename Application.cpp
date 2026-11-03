@@ -170,7 +170,7 @@ void Application::searchTrie() {
     }
     string search;
     cin.ignore();
-    
+
     cout << "Enter what you want to search for: ";
     getline(cin, search);
     cout << "Searching Trie for: " << search << endl;
@@ -179,7 +179,25 @@ void Application::searchTrie() {
 }
 
 void Application::comparePerformance() {
+    //Both structures need the dataset before they can be compared
+    if (logs.empty()) {
+        cout << "Please load the dataset first." << endl;
+        return;
+    }
+    string search;
 
+    //Removes the Enter left over from the menu choice
+    cin.ignore();
+
+    cout << "Enter a search term to compare: ";
+    getline(cin, search);
+
+    cout << endl;
+    cout << "Comparing performance for: " << search << endl;
+
+    //Later give the searches to both to test:
+    //hashTable.search("/usr/login");
+    //trie.search("/usr/login");
 }
 
 void Application::printsamplelogsfortest() {
@@ -196,5 +214,25 @@ void Application::printsamplelogsfortest() {
         cout << "Severity: " << logs[i].severity << endl;
         cout << "Message: " << logs[i].message << endl;
         cout << "Response Time: " << logs[i].responseTime << endl;
+    }
+}
+
+void Application::displayresults(vector<int> resultids) {
+    cout << endl;
+    cout << "Matches found: " << resultids.size() << endl;
+
+    //Each number in resultIds represents the ID of a matching log
+    for (int i = 0; i < resultids.size(); i++) {
+        int id = resultids[i];
+        //Make sure the ID is valid before using it
+        if (id >= 0 && id < logs.size()) {
+            cout << endl;
+            cout << "ID: " << logs[id].id << endl;
+            cout << "Timestamp: " << logs[id].timestamp << endl;
+            cout << "Service: " << logs[id].serviceName << endl;
+            cout << "Severity: " << logs[id].severity << endl;
+            cout << "Message: " << logs[id].message << endl;
+            cout << "Response Time: " << logs[id].responseTime << endl;
+        }
     }
 }
