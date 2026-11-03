@@ -124,22 +124,22 @@ void Application::displayMenu() {
             loadData();
             cout << "Loading Dataset!" << endl;
         }
-        if (choice == 2) {
+        else if (choice == 2) {
             searchHashTable();
             cout << "Searching with Hash tables!" << endl;
         }
-        if (choice == 3) {
+        else if (choice == 3) {
             searchTrie();
             cout << "Searching with Trie!" << endl;
         }
-        if (choice == 4) {
+        else if (choice == 4) {
             comparePerformance();
             cout << "Comparing preformance!" << endl;
         }
-        if (choice == 5) {
+        else if (choice == 5) {
             cout << "Goodbye!" << endl;
         }
-        else if (choice < 1 || choice > 5) {
+        else {
             cout << "Invalid choice." << endl;
         }
     }
