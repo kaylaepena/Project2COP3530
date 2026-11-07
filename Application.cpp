@@ -363,8 +363,16 @@ void Application::displayresults(vector<int> resultids) {
     cout << endl;
     cout << "Matches found: " << resultids.size() << endl;
 
+    //This is to only print the first 10 matches, because seeing all was too much, but I can change this back
+    int amount = resultids.size();
+    if (amount > 10) {
+        amount = 10;
+    }
+    //If you want to print all, change the following for loop to this
+    //for (int i = 0; i < resultids.size(); i++) {
+
     //Each number in resultIds represents the ID of a matching log
-    for (int i = 0; i < resultids.size(); i++) {
+    for (int i = 0; i < amount; i++) {
         int id = resultids[i];
         //Make sure the ID is valid before using it
         if (id >= 0 && id < logs.size()) {
