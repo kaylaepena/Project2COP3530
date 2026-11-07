@@ -1,5 +1,7 @@
 #include "Trie.h"
 
+#include <algorithm>
+
 Trie::Entry::Entry() {
     // Initializes trie node.
     endOfKey = false;
@@ -11,6 +13,21 @@ Trie::Trie() {
     // Initializes trie.
     root = new Entry(); // Empty Root
     numKeys = 0; // Number of Keys in Trie
+}
+
+void Trie::collectPrefixIds(Entry *currentNode, vector<int> &prefixIds) {
+    // Recursively appends all logIds below prefix.
+    if (currentNode == nullptr) {return;} // Node is empty.
+
+    if (currentNode->endOfKey) {
+        // Append key's logIds to prefixIds vector.
+        prefixIds.insert(prefixIds.end(), currentNode->logIds.begin(), currentNode->logIds.end());
+    }
+
+    for (auto child : currentNode->children) {
+        // Continue searching through all the currentNode's children.
+        collectPrefixIds(child.second, prefixIds);
+    }
 }
 
 void Trie::clearHelper(Entry *currentNode) {
@@ -33,14 +50,15 @@ void Trie::insert(string key, int logId) {
         }
         currentNode = currentNode->children[c];
     }
+    // Check endOfKey status before appending logId.
     if (currentNode->endOfKey) {
         // Key is already in trie, so only append the logId.
-        currentNode->logIds.push_back(logId);
+        currentNode->logIds.insert(logId);
     }
     else {
         // Key is new.
         currentNode->endOfKey = true; // Establish as end node.
-        currentNode->logIds.push_back(logId); // Append logId.
+        currentNode->logIds.insert(logId); // Append logId.
         numKeys++; // Increment total number of keys in trie.
     }
 }
@@ -58,7 +76,8 @@ vector<int> Trie::search(string key) {
         currentNode = currentNode->children[c];
     }
     if (currentNode->endOfKey) {
-        return currentNode->logIds; // Returns logIds stored at end node of key.
+        vector<int> results(currentNode->logIds.begin(), currentNode->logIds.end());
+        return results; // Returns logIds stored at end node of key.
     }
     return vector<int> {}; // Returns empty vector otherwise.
 }
@@ -81,6 +100,23 @@ bool Trie::startsWith(string prefix) {
     }
     // Prefix exists in trie.
     return true;
+}
+
+vector<int> Trie::searchPrefix(string prefix) {
+    // Finds all logIds for keys matching the given prefix.
+    vector<int> prefixIds = {};
+    if (!startsWith(prefix)) {
+        // Prefix does not exist in trie.
+        return prefixIds; // Return empty vector.
+    }
+
+    Entry* currentNode = root; // Start at root.
+    for (char c : prefix) {
+        // Iterate through all the characters in prefix.
+        currentNode = currentNode->children[c];
+    }
+    collectPrefixIds(currentNode, prefixIds);
+    return prefixIds;
 }
 
 void Trie::clear() {
