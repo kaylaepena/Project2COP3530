@@ -251,12 +251,32 @@ void Application::searchTrie() {
     }
     string search;
     cin.ignore();
-
     cout << "Enter what you want to search for: ";
     getline(cin, search);
     cout << "Searching Trie for: " << search << endl;
+    cout << "1. Exact Search" << endl;
+    cout << "2. Prefix Search" << endl;
+    cout << "Enter search type: ";
+    string searchType;
+    getline(cin, searchType);
 
-    //Alejandra's Trie search will be called here later
+    //Writes and stores matching logs
+    vector<int> results;
+    auto start = chrono::high_resolution_clock::now();
+    if (searchType == "1") {
+        results = trie.search(search);
+    }
+    else if (searchType == "2") {
+        results = trie.searchPrefix(search);
+    }
+    else {
+        cout << "Invalid search type." << endl;
+        return;
+    }
+    auto end = chrono::high_resolution_clock::now();
+    auto searchTime = chrono::duration_cast<chrono::microseconds>(end - start).count();
+    cout << "Trie search time: " << searchTime << " microseconds" << endl;
+    displayresults(results);
 }
 
 void Application::comparePerformance() {
