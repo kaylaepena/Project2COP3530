@@ -102,6 +102,7 @@ void Application::loadData() {
     //Clears old data in case the user loads a different file later
     logs.clear();
     hashTable.clear();
+    trie.clear();
 
     string line;
     int count = 0;
@@ -151,7 +152,22 @@ void Application::loadData() {
     cout << "Longest chain: " << hashTable.longestChain() << endl;
 
     //For the Trie:
-    //Add here later
+    auto trieBuildStart = chrono::high_resolution_clock::now();
+    //Stores the same searchable information in the Trie
+    for (int i = 0; i < logs.size(); i++) {
+        trie.insert(logs[i].serviceName, logs[i].id);
+        trie.insert(logs[i].severity, logs[i].id);
+        stringstream words(logs[i].message);
+        string word;
+        while (words >> word) {
+            trie.insert(word, logs[i].id);
+        }
+    }
+    auto trieBuildEnd = chrono::high_resolution_clock::now();
+    auto trieBuildTime = chrono::duration_cast<chrono::milliseconds>(trieBuildEnd - trieBuildStart).count();
+    cout << "Trie built successfully." << endl;
+    cout << "Trie build time: " << trieBuildTime << " milliseconds" << endl;
+    cout << "Keys stored: " << trie.size() << endl;
 
 }
 
