@@ -20,10 +20,8 @@ struct LogEntry {
     int responseTime;
 };
 
-
 class Application {
 private:
-
     vector<LogEntry> logs;
     HashTable hashTable;
     Trie trie;
@@ -38,6 +36,5 @@ public:
     void searchTrie();
     void comparePerformance();
 };
-
 
 #endif

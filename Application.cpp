@@ -125,7 +125,7 @@ void Application::loadData() {
     cout << skipped << " lines were skipped." << endl;
 
     //Only keep this when testing
-    printsamplelogsfortest();
+    //printsamplelogsfortest();
 
     //For the Hash Table:
     auto hashBuildStart = chrono::high_resolution_clock::now();
@@ -168,7 +168,6 @@ void Application::loadData() {
     cout << "Trie built successfully." << endl;
     cout << "Trie build time: " << trieBuildTime << " milliseconds" << endl;
     cout << "Keys stored: " << trie.size() << endl;
-
 }
 
 void Application::displayMenu() {
@@ -195,15 +194,12 @@ void Application::displayMenu() {
         }
         if (choice == 1) {
             loadData();
-            cout << "Loading Dataset!" << endl;
         }
         else if (choice == 2) {
             searchHashTable();
-            cout << "Searching with Hash tables!" << endl;
         }
         else if (choice == 3) {
             searchTrie();
-            cout << "Searching with Trie!" << endl;
         }
         else if (choice == 4) {
             comparePerformance();
@@ -223,7 +219,6 @@ void Application::searchHashTable() {
         cout << "You must load the dataset first." << endl;
         return;
     }
-
     string search;
     //Removes the Enter left over from the menu choice
     cin.ignore();
@@ -288,10 +283,8 @@ void Application::comparePerformance() {
 
     //Removes the Enter left over from the menu choice
     cin.ignore();
-
     cout << "Enter a search term to compare: ";
     getline(cin, search);
-
     cout << endl;
     cout << "Comparing performance for: " << search << endl;
 
@@ -299,6 +292,7 @@ void Application::comparePerformance() {
     int repetitions = 1000; //Sometimes this finished too fast, so I had to add repetitions
     vector<int> hashResults;
     vector<int> trieResults;
+
     //Measures how long the Hash Table takes
     auto hashStart = chrono::high_resolution_clock::now();
     for (int i = 0; i < repetitions; i++) {
@@ -311,6 +305,7 @@ void Application::comparePerformance() {
         trieResults = trie.search(search);
     }
     auto trieEnd = chrono::high_resolution_clock::now();
+
     //Calculates the average time for one search
     double hashTime = chrono::duration_cast<chrono::microseconds>(hashEnd - hashStart).count() / (double)repetitions;
     double trieTime = chrono::duration_cast<chrono::microseconds>(trieEnd - trieStart).count() / (double)repetitions;
@@ -367,6 +362,7 @@ void Application::displayresults(vector<int> resultids) {
     int amount = resultids.size();
     if (amount > 10) {
         amount = 10;
+        cout << "Showing first 10 matches only." << endl;
     }
     //If you want to print all, change the following for loop to this
     //for (int i = 0; i < resultids.size(); i++) {
