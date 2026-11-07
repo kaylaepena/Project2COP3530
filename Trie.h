@@ -13,14 +13,15 @@ class Trie {
         unordered_map<char, Entry*> children; // Stores pointers to all child nodes.
         set<int> logIds; // Stores all log Ids that map to the key.
         
-        Entry(); // Initializes trie node.
+        Entry(); // Constructor
     };
     Entry* root; // Empty root node.
     int numKeys; // Total number of keys that have been inserted.
 
     public:
-        // ================== CONSTRUCTOR ================== //
-        Trie(); // Initializes trie with root.
+        // ================== CONSTRUCTOR / DESTRUCTOR ================== //
+        Trie(); // Constructor
+        ~Trie(); // Destructor
         // ================== HELPER FUNCTIONS ================== //
         void collectPrefixIds(Entry* currentNode, vector<int>& prefixIds); // Recursively appends all logIds below prefix.
         void clearHelper(Entry* currentNode); // Recursively deletes all nodes. Called by clear().

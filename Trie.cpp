@@ -15,6 +15,11 @@ Trie::Trie() {
     numKeys = 0; // Number of Keys in Trie
 }
 
+Trie::~Trie() {
+    // Deletes all pointers to children in trie.
+    clearHelper(root);
+}
+
 void Trie::collectPrefixIds(Entry *currentNode, vector<int> &prefixIds) {
     // Recursively appends all logIds below prefix.
     if (currentNode == nullptr) {return;} // Node is empty.
@@ -33,7 +38,7 @@ void Trie::collectPrefixIds(Entry *currentNode, vector<int> &prefixIds) {
 void Trie::clearHelper(Entry *currentNode) {
     // Recursively removes all nodes and stored logIds from trie.
     if (currentNode == nullptr) {return;}
-    for (auto child : currentNode->children) {
+    for (auto& child : currentNode->children) {
         clearHelper(child.second);
     }
     delete currentNode;
@@ -115,7 +120,9 @@ vector<int> Trie::searchPrefix(string prefix) {
         // Iterate through all the characters in prefix.
         currentNode = currentNode->children[c];
     }
-    collectPrefixIds(currentNode, prefixIds);
+    collectPrefixIds(currentNode, prefixIds); // Collect at and below prefix end node.
+    sort(prefixIds.begin(), prefixIds.end()); // Sort IDs.
+    prefixIds.erase(unique(prefixIds.begin(), prefixIds.end()), prefixIds.end()); // Delete consecutive duplicates.
     return prefixIds;
 }
 
