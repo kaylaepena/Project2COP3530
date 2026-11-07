@@ -10,4 +10,6 @@ add_executable(Project2
         Application.h
         HashTable.cpp
         HashTable.h
+        Trie.cpp
+        Trie.h
 )
