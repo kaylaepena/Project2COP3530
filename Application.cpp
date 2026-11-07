@@ -125,7 +125,7 @@ void Application::loadData() {
     cout << skipped << " lines were skipped." << endl;
 
     //Only keep this when testing
-    //printsamplelogsfortest();
+    printsamplelogsfortest();
 
     //For the Hash Table:
     auto hashBuildStart = chrono::high_resolution_clock::now();
@@ -207,7 +207,6 @@ void Application::displayMenu() {
         }
         else if (choice == 4) {
             comparePerformance();
-            cout << "Comparing preformance!" << endl;
         }
         else if (choice == 5) {
             cout << "Goodbye!" << endl;
@@ -296,9 +295,51 @@ void Application::comparePerformance() {
     cout << endl;
     cout << "Comparing performance for: " << search << endl;
 
-    //Later give the searches to both to test:
-    //hashTable.search("/usr/login");
-    //trie.search("/usr/login");
+    //Repeats each search to get a more accurate time
+    int repetitions = 1000; //Sometimes this finished too fast, so I had to add repetitions
+    vector<int> hashResults;
+    vector<int> trieResults;
+    //Measures how long the Hash Table takes
+    auto hashStart = chrono::high_resolution_clock::now();
+    for (int i = 0; i < repetitions; i++) {
+        hashResults = hashTable.search(search);
+    }
+    auto hashEnd = chrono::high_resolution_clock::now();
+    //Measures how long the Trie takes
+    auto trieStart = chrono::high_resolution_clock::now();
+    for (int i = 0; i < repetitions; i++) {
+        trieResults = trie.search(search);
+    }
+    auto trieEnd = chrono::high_resolution_clock::now();
+    //Calculates the average time for one search
+    double hashTime = chrono::duration_cast<chrono::microseconds>(hashEnd - hashStart).count() / (double)repetitions;
+    double trieTime = chrono::duration_cast<chrono::microseconds>(trieEnd - trieStart).count() / (double)repetitions;
+
+    //Displays the comparison
+    cout << endl;
+    cout << "Hash Table average search time: " << hashTime << " microseconds" << endl;
+    cout << "Trie average search time: " << trieTime << " microseconds" << endl;
+    cout << "Hash Table matches: " << hashResults.size() << endl;
+    cout << "Trie matches: " << trieResults.size() << endl;
+
+    //Checks if both structures find the same logs
+    if (hashResults == trieResults) {
+        cout << "Both structures returned the same results." << endl;
+    }
+    else {
+        cout << "Warning: The search results do not match." << endl;
+    }
+
+    //Shows which structure had the faster average search time
+    if (hashTime < trieTime) {
+        cout << "Hash Table was faster." << endl;
+    }
+    else if (trieTime < hashTime) {
+        cout << "Trie was faster." << endl;
+    }
+    else {
+        cout << "Both structures had the same search time." << endl;
+    }
 }
 
 void Application::printsamplelogsfortest() {
