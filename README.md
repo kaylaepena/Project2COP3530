@@ -149,15 +149,44 @@ Tested against a brute-force reference with 1,000,000 logs and about 5,000 disti
 
 ## Trie
 
-***ALEJANDRA PART HERE
+The Trie is declared and defined in Trie.h and Trie.cpp, respectively. 
 
-***Add this once the Trie is finished:
-- how words/keys are inserted
-- exact search
-- prefix search
-- how matching log IDs are returned
+**Functions**
 
-***Try to keep the Trie in Trie.h and Trie.cpp and similar to the Hash one table
+- `void insert(string key, int logId)` - Inserts key and ID into trie.
+- `vector<int> search(string key)` - Returns vector of all IDs stored under the given search key.
+- `int size()` - Returns the total number of keys inserted into the trie.
+- `bool startsWith(string prefix)` - Returns whether there is a key that starts with the given prefix.
+- `vector<int> searchPrefix(string prefix)` - Returns vector of all IDs stored at or following the end of the given prefix.
+- `void clear()` - Clears trie of all child nodes.
+
+**What Gets Inserted**
+
+Keys are inserted by character, wherein each character node stores the following character as a child node in an unordered_map. The last character in the key is marked as the end of the key node (`endOfKey = true`). At this node, the given ID is inserted into its set, `logIds`, preventing duplicate IDs and automatically sorting the ID in ascending order.
+
+**Searching**
+
+*Exact Search*
+
+The search function takes in a key as a string and iterates through each character. If the following character in the string is not found linked to the current character, or the last character is not marked as the end of a key, then the given key has not been inserted into the trie and an empty vector is returned. Otherwise, a vector containing all the IDs stored in the last node is returned. 
+
+*Prefix Search*
+
+The prefix search function takes in a prefix of any length as a string and iterates through each character. Once the last character in the prefix is reached, the trie is traversed starting at its children and all IDs are appended to the returned vector. The resulting vector is sorted in ascending order and duplicate entries are eliminated. The function returns an empty string only if all the characters in the prefix are not found linked to one another. 
+
+**Complexity**
+
+*Main Operations*
+
+- Insert - $O(L + log(m))$, where $L$ is the length of the key and $m$ is the number of IDs already mapped to the key.
+- Exact Search - $O(L + m)$, where $L$ is the length of the key and $m$ is the number of IDs already mapped to the key.
+- Prefix Search - $O(L + P + Rlog(R))$, where $L$ is the length of the prefix, $P$ is the number of nodes following the prefix, and $R$ is the number of IDs collected.
+
+*Additional Operations*
+
+- Get Size - $O(1)$.
+- Starts With - $O(L)$, where $L$ is the length of the prefix.
+- Clear - $O(N)$, where $N$ is the total number of nodes in the Trie.
 
 ## Performance Comparison
 
